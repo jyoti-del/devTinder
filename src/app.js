@@ -1,10 +1,25 @@
 const express = require('express');
-const {connectDB} = require('./config/database')
-const {adminAuth , userAuth} = require('./middleware/auth')
+const {connectDB} = require('./config/database');
+const { User } = require('./models/user');
 const app = express();
 
 const port = 7777
 
+app.post('/signup' , async (req , res) =>{
+    const user = new User({
+        firstName : "Ujjwal",
+        lastName  : "Bhardwaj",
+        emailId : "ujjwal.bhardwaj@gmail.com",
+        password : '123'
+    })
+
+    try{
+    await user.save()
+    res.send("Data saved successfully")
+    }catch(err){
+        res.status(400).send("Error data saving" + err.message)
+    }
+})
 connectDB().then(() =>{
   console.log("Database connected successfully")
   app.listen(port , () =>{
@@ -13,50 +28,3 @@ connectDB().then(() =>{
 }).catch((err) =>{
     console.log("Database connection error")
 })
-
-// handle auth middleware for post, get, put , delete
-app.use('/admin' ,adminAuth)
-app.get('/admin/getAllData' , (req , res)=>{
-      res.send("Get all Data")
-})
-
-app.use('/admin/deleteAllData' , (req , res) =>{
-    res.send("Delete all data")
-})
-
-app.use('/user' , userAuth , (req , res) =>{
-    res.send("User data sent")
-})
-
-app.post('/login' , (req , res) =>{
-    res.send("User logged in successfully")
-})
-
-// will give me error to handle it we need try/catch or err method
-app.use('/getAll' , (req , res)=>{
-    throw new Error("acdeekj")
-})
-
-app.use('/' , (err , req , res , next) =>{
-   if(err){
-    res.status(500).send("Something went wrong")
-   }
-})
-
-app.use('/getAll3' , ( req , res ) =>{
-    try{
-       throw new Error("Error handler")
-    }catch(err){
-        res.status(500).send("Some Error")
-    }
- })
-
-// try to put it at last so anything breaks will come here
- app.use('/' , (err , req , res , next) =>{
-    if(err){
-     res.status(500).send("Something went wrong")
-    }
- })
-// app.listen(port , () =>{
-//     console.log(`Server is listening on port ${port}`)
-// })
