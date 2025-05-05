@@ -89,6 +89,17 @@ app.use("/test3", (req , res, next) =>{
 // wrap anything inside an array or not need to wrap work both ways
 // app.use('/end-point' , rh , rh2 , [rh3 , rh4] , rh5)
 
+// another way to write route handler
+app.use('/test12' , (req , res , next) =>{
+    console.log("test12 response")
+    next()
+})
+app.use('/test12' , (req , res) =>{
+    console.log("Response test123")
+    res.send("Response test123")
+} )
+
+// GET /users  ----> go to middleware chain  ===> request handler
 app.listen(port , () =>{
     console.log(`Server is listening on port ${port}`)
 })
